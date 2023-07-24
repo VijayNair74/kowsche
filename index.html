@@ -529,27 +529,39 @@
 		}
 
 		function copyToClipboard(text) {
-		  const navLink = document.querySelector('.nav-link');
+		  // Check if Clipboard API is available
+		  if (navigator.clipboard && navigator.clipboard.writeText) {
+			navigator.clipboard.writeText(text)
+			  .then(() => {
+				console.log("Text copied to clipboard successfully!");
+			  })
+			  .catch((error) => {
+				console.error("Failed to copy text to clipboard:", error);
+			  });
+		  } else {
+			// Fallback for browsers that don't support Clipboard API
+			const textArea = document.createElement("textarea");
+			textArea.value = text;
+			textArea.style.position = "fixed"; // Make it invisible
+			document.body.appendChild(textArea);
+			textArea.focus();
+			textArea.select();
 
-		  const clipboard = new ClipboardJS(navLink, {
-			text: function() {
-			  return text;
+			try {
+			  const successful = document.execCommand("copy");
+			  if (successful) {
+				console.log("Text copied to clipboard successfully!");
+			  } else {
+				console.error("Copying text to clipboard failed.");
+			  }
+			} catch (err) {
+			  console.error("Unable to copy text to clipboard:", err);
+			} finally {
+			  document.body.removeChild(textArea); // Clean up
 			}
-		  });
-
-		  clipboard.on('success', function(e) {
-			console.log("Text copied to clipboard successfully!");
-			clipboard.destroy(); // Cleanup clipboard instance
-		  });
-
-		  clipboard.on('error', function(e) {
-			console.error("Failed to copy text to clipboard:", e);
-			clipboard.destroy(); // Cleanup clipboard instance
-		  });
-
-		  // Manually trigger the copy action
-		  navLink.click();
+		  }
 		}
+
 
 		// Initialize the client on page load
 		initClient();
