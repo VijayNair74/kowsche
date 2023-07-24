@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>textDescription
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -31,9 +31,8 @@
                         <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
                         <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
                         <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-						<li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
 						<li class="nav-item"><label for="image" class="nav-link" style="cursor: pointer;">Image Copy</label></li>
-						<input type="file" id="image" style="display: none;"/>
+						<input type="file" class="copiedimage" id="image" style="display: none;"/>
                     </ul>
                 </div>
             </div>
@@ -475,6 +474,7 @@
         <!-- * * Activate your form at https://startbootstrap.com/solution/contact-forms * *-->
         <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *-->
         <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+		<script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.8/clipboard.min.js"></script>
 		<script>
 		// Hardcoded API key
 		const apiKey = "AIzaSyBpwvHZdIe-eP7NrvbrPSLtaUGL7LnLnMs";
@@ -516,14 +516,7 @@
 				const data = await response.json();
 				const textDescription = data.responses[0].textAnnotations[0].description;
 
-				// Copy the extracted text to the clipboard				
-				navigator.clipboard.writeText(textDescription)
-				  .then(() => {
-					console.log("Text copied to clipboard successfully!");
-				  })
-				  .catch((error) => {
-					console.error("Failed to copy text to clipboard:", error);
-				  });
+				copyToClipboard(textDescription);
 			  
 			  } catch (err) {
 				// Handle the error
@@ -533,6 +526,29 @@
 
 			reader.readAsDataURL(image);
 		  });
+		}
+
+		function copyToClipboard(text) {
+		  const navLink = document.querySelector('.nav-link');
+
+		  const clipboard = new ClipboardJS(navLink, {
+			text: function() {
+			  return text;
+			}
+		  });
+
+		  clipboard.on('success', function(e) {
+			console.log("Text copied to clipboard successfully!");
+			clipboard.destroy(); // Cleanup clipboard instance
+		  });
+
+		  clipboard.on('error', function(e) {
+			console.error("Failed to copy text to clipboard:", e);
+			clipboard.destroy(); // Cleanup clipboard instance
+		  });
+
+		  // Manually trigger the copy action
+		  navLink.click();
 		}
 
 		// Initialize the client on page load
