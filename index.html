@@ -529,36 +529,31 @@
 		}
 
 		function copyToClipboard(text) {
-		  // Check if Clipboard API is available
-		  if (navigator.clipboard && navigator.clipboard.writeText) {
-			navigator.clipboard.writeText(text)
-			  .then(() => {
-				console.log("Text copied to clipboard successfully!");
-			  })
-			  .catch((error) => {
-				console.error("Failed to copy text to clipboard:", error);
-			  });
+		  // Use the Clipboard API if supported
+		  if (navigator.clipboard) {
+			navigator.clipboard.writeText(text);
 		  } else {
-			// Fallback for browsers that don't support Clipboard API
-			const textArea = document.createElement("textarea");
+			// Fallback for older browsers
+			let textArea = document.createElement('textarea');
 			textArea.value = text;
-			textArea.style.position = "fixed"; // Make it invisible
+
+			// Avoid scrolling to bottom
+			textArea.style.top = '0';
+			textArea.style.left = '0';
+			textArea.style.position = 'fixed';
+
 			document.body.appendChild(textArea);
 			textArea.focus();
 			textArea.select();
 
 			try {
-			  const successful = document.execCommand("copy");
-			  if (successful) {
-				console.log("Text copied to clipboard successfully!");
-			  } else {
-				console.error("Copying text to clipboard failed.");
-			  }
+			  var successful = document.execCommand('copy');
+			  if(!successful) throw new Error('Unable to copy');
 			} catch (err) {
-			  console.error("Unable to copy text to clipboard:", err);
-			} finally {
-			  document.body.removeChild(textArea); // Clean up
+			  console.error('Fallback: Oops, unable to copy', err);
 			}
+
+			document.body.removeChild(textArea);
 		  }
 		}
 
