@@ -1,4 +1,4 @@
-<!DOCTYPE html>textDescription
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
@@ -162,17 +162,7 @@
                     </div>
                 </div>
             </div>
-        </div>
-		<br>
-		<br>
-		<h1>Text Detection</h1>
-		<input type="file" id="image" />
-		<p id="text"></p>
-		<label for="apiKey">API Key:</label>
-		<input type="text" id="apiKey" />
-		<button id="submitApiKey">Submit</button>
-		<br>
-		<br>  
+        </div>		
         <!-- Contact-->
         <section class="page-section" id="contact">
             <div class="container">
@@ -516,6 +506,17 @@
 				const data = await response.json();
 				const textDescription = data.responses[0].textAnnotations[0].description;
 
+				const copyToClipboard = (text) => {
+				  // Use Clipboard API
+				  navigator.clipboard.writeText(text)
+					.then(() => {
+					  console.log('Copied to clipboard successfully!');
+					})
+					.catch((err) => {
+					  console.error('Failed to copy. ', err);
+					});
+				}
+				
 				copyToClipboard(textDescription);
 			  
 			  } catch (err) {
@@ -528,34 +529,7 @@
 		  });
 		}
 
-		function copyToClipboard(text) {
-		  // Use the Clipboard API if supported
-		  if (navigator.clipboard) {
-			navigator.clipboard.writeText(text);
-		  } else {
-			// Fallback for older browsers
-			let textArea = document.createElement('textarea');
-			textArea.value = text;
-
-			// Avoid scrolling to bottom
-			textArea.style.top = '0';
-			textArea.style.left = '0';
-			textArea.style.position = 'fixed';
-
-			document.body.appendChild(textArea);
-			textArea.focus();
-			textArea.select();
-
-			try {
-			  var successful = document.execCommand('copy');
-			  if(!successful) throw new Error('Unable to copy');
-			} catch (err) {
-			  console.error('Fallback: Oops, unable to copy', err);
-			}
-
-			document.body.removeChild(textArea);
-		  }
-		}
+		
 
 
 		// Initialize the client on page load
